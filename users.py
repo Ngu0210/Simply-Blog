@@ -1,9 +1,9 @@
 from database import cursor, connection
 from flask import Blueprint, request, jsonify
 
-users = Blueprint("users", __name__)
+users = Blueprint("users", __name__, url_prefix="/users")
 
-@users.route("/users", methods=["GET"])
+@users.route("/", methods=["GET"])
 def user_index():
     # Return all users
     sql = "SELECT * FROM users"
@@ -11,7 +11,7 @@ def user_index():
     users = cursor.fetchall()
     return jsonify(users)
 
-@users.route("/users", methods=["POST"])
+@users.route("/", methods=["POST"])
 def user_create():
     # Create a new user
     sql = "INSERT INTO users (firstName, lastName) values (%s, %s);"
@@ -23,7 +23,7 @@ def user_create():
     user = cursor.fetchone()
     return jsonify(user)
 
-@users.route("/users/<int:id>", methods=["GET"])
+@users.route("/<int:id>", methods=["GET"])
 def user_show(id):
     # Return a single user
     sql = "SELECT * FROM users where id = %s;"
@@ -31,7 +31,7 @@ def user_show(id):
     user = cursor.fetchone()
     return jsonify(user)
 
-@users.route("/users/<int:id>", methods=["PUT", "PATCH"])
+@users.route("/<int:id>", methods=["PUT", "PATCH"])
 def user_update(id):
     #Update a user
     sql = "UPDATE users SET firstName = %s, lastName = %s WHERE id = %s;"
@@ -43,7 +43,7 @@ def user_update(id):
     user = cursor.fetchone()
     return jsonify(user)
 
-@users.route("/users/<int:id>", methods=["DELETE"])
+@users.route("/<int:id>", methods=["DELETE"])
 def user_delete(id):
     sql = "SELECT * FROM users WHERE id = %s;"
     cursor.execute(sql, (id,))
