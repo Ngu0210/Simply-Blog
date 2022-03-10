@@ -11,3 +11,6 @@ connection = psycopg2.connect(
 
 cursor = connection.cursor()
 
+cursor.execute("create table if not exists users (id serial PRIMARY KEY, firstName varchar, lastName varchar);")
+cursor.execute("drop table if exists books;")
+connection.commit()
