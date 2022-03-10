@@ -1,13 +1,17 @@
+# Load up Environment Variables
 from dotenv import load_dotenv
-from flask import Flask, render_template
-import controllers
-from controllers.users_controller import users
-
-app=Flask(__name__)
 load_dotenv() 
 
-from controllers import registerable_controllers
+# Init Flask
+from flask import Flask, render_template
+app = Flask(__name__) 
 
+# Init ORM Database
+from database import init_db
+db = init_db(app) 
+
+# Register Controllers
+from controllers import registerable_controllers
 for controller in registerable_controllers:
     app.register_blueprint(controller)
 
