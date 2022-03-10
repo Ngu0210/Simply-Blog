@@ -1,9 +1,13 @@
 from dotenv import load_dotenv
 from flask import Flask, render_template
-from users import users
+import controllers
+from controllers.users_controller import users
 
 app=Flask(__name__)
 load_dotenv() 
 
-app.register_blueprint(users)
+from controllers import registerable_controllers
+
+for controller in registerable_controllers:
+    app.register_blueprint(controller)
 
