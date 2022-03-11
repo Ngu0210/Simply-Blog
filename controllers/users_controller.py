@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify
 from main import db
 from models.User import User
+from schemas.UserSchema import users_schema
 
 users = Blueprint("users", __name__, url_prefix="/users")
 
@@ -9,9 +10,8 @@ users = Blueprint("users", __name__, url_prefix="/users")
 def user_index():
     # Return all users
     users = User.query.all()
-
-    
-    return jsonify(users)
+    serialised_data = users_schema.dump(users)
+    return jsonify(serialised_data)
     # sql = "SELECT * FROM users"
     # cursor.execute(sql)
     # users = cursor.fetchall()
