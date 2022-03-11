@@ -17,6 +17,9 @@ def user_create():
     # Create a new user
     user_fields = user_schema.load(request.json)
 
+    if "firstname" not in user_fields.keys() or "lastname" not in user_fields.keys():
+        return abort(400)
+
     new_user = User()
     new_user.firstname = user_fields["firstname"]
     new_user.lastname = user_fields["lastname"]
