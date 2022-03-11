@@ -1,8 +1,8 @@
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from main import db
 from models.User import User
-from schemas.UserSchema import users_schema
+from schemas.UserSchema import users_schema, user_schema
 
 users = Blueprint("users", __name__, url_prefix="/users")
 
@@ -10,54 +10,49 @@ users = Blueprint("users", __name__, url_prefix="/users")
 def user_index():
     # Return all users
     users = User.query.all()
-    serialised_data = users_schema.dump(users)
-    return jsonify(serialised_data)
-    # sql = "SELECT * FROM users"
-    # cursor.execute(sql)
-    # users = cursor.fetchall()
-    # return jsonify(users)
+    return jsonify(users_schema.dump(users))
 
-# @users.route("/", methods=["POST"])
-# def user_create():
-#     # Create a new user
-#     sql = "INSERT INTO users (firstName, lastName) values (%s, %s);"
-#     cursor.execute(sql, (request.json["firstName"], request.json["lastName"]))
-#     connection.commit()
+@users.route("/", methods=["POST"])
+def user_create():
+    # Create a new user
+    user_fields = user_schema.load(request.json)
 
-#     sql = "SELECT * FROM users ORDER BY ID DESC LIMIT 1"
-#     cursor.execute(sql)
-#     user = cursor.fetchone()
-#     return jsonify(user)
+    new_user = User()
+    new_user.firstname = user_fields["firstname"]
+    new_user.lastname = user_fields["lastname"]
 
-# @users.route("/<int:id>", methods=["GET"])
-# def user_show(id):
-#     # Return a single user
-#     sql = "SELECT * FROM users where id = %s;"
-#     cursor.execute(sql, (id,))
-#     user = cursor.fetchone()
-#     return jsonify(user)
+    db.session.add(new_user)
+    db.session.commit()
 
-# @users.route("/<int:id>", methods=["PUT", "PATCH"])
-# def user_update(id):
-#     #Update a user
-#     sql = "UPDATE users SET firstName = %s, lastName = %s WHERE id = %s;"
-#     cursor.execute(sql, (request.json["firstName"], request.json["lastName"], id))
-#     connection.commit()
+    return jsonify(user_schema.dump(new_user))
 
-#     sql = "SELECT * FROM users WHERE id = %s"
-#     cursor.execute(sql, (id,))
-#     user = cursor.fetchone()
-#     return jsonify(user)
+@users.route("/<int:id>", methods=["GET"])
+def user_show(id):
+    # Return a single user
+    user = User.query.get(id)
+    return jsonify(user_schema.dump(user))
 
-# @users.route("/<int:id>", methods=["DELETE"])
-# def user_delete(id):
-#     sql = "SELECT * FROM users WHERE id = %s;"
-#     cursor.execute(sql, (id,))
-#     user = cursor.fetchone()
+@users.route("/<int:id>", methods=["PUT", "PATCH"])
+def user_update(id):
+    # Update a user
+    user = User.query.filter_by(id=id)
     
-#     if user:
-#         sql = "DELETE FROM users WHERE id = %s;"
-#         cursor.execute(sql, (id,))
-#         connection.commit()
+    user_fields = user_schema.load(request.json)
+    user.update(user_fields)
 
-#     return jsonify(user)
+    db.session.commit()
+
+    return jsonify(user_schema.dump(user[0]))
+
+@users.route("/<int:id>", methods=["DELETE"])
+def user_delete(id):
+    # Delete a user
+    user = User.query.get(id)
+
+    if not user:
+        return abort(404)
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify(user_schema.dump(user))
