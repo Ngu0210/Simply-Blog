@@ -2,8 +2,6 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 
 def init_db(app):
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql+psycopg2://postgres:{os.getenv('DBPASS')}@23.22.149.187:5432/simply_blog"
-    app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
     db = SQLAlchemy(app)
     return db
 
