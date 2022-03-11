@@ -5,6 +5,7 @@ load_dotenv()
 # Init Flask
 from flask import Flask, render_template
 app = Flask(__name__) 
+app.config.from_object("default_settings.app_config")
 
 # Init ORM Database
 from database import init_db
@@ -13,6 +14,9 @@ db = init_db(app)
 #Setup Serialization and Deserialization
 from flask_marshmallow import Marshmallow
 ma = Marshmallow(app)
+
+from commands import db_commands
+app.register_blueprint(db_commands)
 
 # Register Controllers
 from controllers import registerable_controllers
