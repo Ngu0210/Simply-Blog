@@ -11,7 +11,10 @@ userImages = Blueprint("userImages", __name__, url_prefix="/users/<int:user_id>/
 @jwt_required()
 @verify_user
 def userImage_create(user_id, user=None):
-    return "1"
+    if "image" in request.files:
+        image = request.files["image"]
+        image.save("uploaded_images/file_1")
+        return ("", 200)
 
 @userImages.route("/<int:id>", methods=["GET"])
 @jwt_required()
