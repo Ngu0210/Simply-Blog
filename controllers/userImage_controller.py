@@ -69,10 +69,12 @@ def userImage_show(user_id, id, user=None):
 @jwt_required()
 @verify_user
 def userImage_delete(user_id, id, user=None):
-    user = User.query.filter_by(id=user_id).first()
+    user = UserImage.query.filter_by(id=user_id).first()
 
     if not user:
         return abort(401, description="Invalid User")
+
+    print(user.user_image)
 
     if user.user_image:
         bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
