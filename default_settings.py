@@ -47,6 +47,16 @@ class DevelopmentConfig(Config):
         return value
 
 class ProductionConfig(Config):
+
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        value = os.environ.get("DB_URI")
+
+        if not value:
+            raise ValueError("DB_URI is not set!")
+
+        return value
+
     @property
     def JWT_SECRET_KEY(self):
         value = os.environ.get("JWT_SECRET_KEY")
@@ -71,7 +81,7 @@ class TestingConfig(Config):
 environment = os.getenv("FLASK_ENV")
 
 if environment == "production":
-    app_config = TestingConfig()
+    app_config = ProductionConfig()
 elif environment == "testing":
     app_config = TestingConfig()
 else:
