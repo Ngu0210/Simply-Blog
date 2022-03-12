@@ -4,15 +4,16 @@ from main import db
 from models.Post import Post
 from models.User import User
 from schemas.PostSchema import posts_schema, post_schema
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from services.auth_service import verify_user
+from sqlalchemy.orm import joinedload
 
 posts = Blueprint("posts", __name__, url_prefix="/posts")
 
 @posts.route("/", methods=["GET"])
 def user_index():
     # Return all users
-    posts = Post.query.all()
+    posts = Post.query.options(joinedload("user")).all()
     return jsonify(posts_schema.dump(posts))
 
 @posts.route("/", methods=["POST"])
