@@ -6,12 +6,14 @@ from flask import Flask, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
 
 
 
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
+jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__) 
@@ -25,6 +27,9 @@ def create_app():
 
     #Setup Encryption
     bcrypt.init_app(app)
+
+    #Token Manager
+    jwt.init_app(app)
 
     #Setup Marshmallow Validation Handling
     from marshmallow.exceptions import ValidationError
