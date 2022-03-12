@@ -2,14 +2,16 @@
 from dotenv import load_dotenv
 load_dotenv() 
 
-# Init Flask
 from flask import Flask, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
+
 
 
 db = SQLAlchemy()
 ma = Marshmallow()
+bcrypt = Bcrypt()
 
 def create_app():
     app = Flask(__name__) 
@@ -21,9 +23,13 @@ def create_app():
     #Setup Serialization and Deserialization
     ma.init_app(app)
 
+    #Setup Encryption
+    bcrypt.init_app(app)
+
     #Setup Marshmallow Validation Handling
     from marshmallow.exceptions import ValidationError
 
+    #Setup CLI commands
     from commands import db_commands
     app.register_blueprint(db_commands)
 
