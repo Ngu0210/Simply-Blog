@@ -12,7 +12,7 @@ class Config(object):
         value = os.environ.get("AWS_ACCESS_KEY_ID")
 
         if not value:
-            raise ValueError("AAWS_ACCESS_KEY_ID is not set!")
+            raise ValueError("AWS_ACCESS_KEY_ID is not set!")
 
         return value
 
