@@ -8,6 +8,11 @@ from datetime import timedelta
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
+@auth.route("/crash", methods=["GET"])
+def auth_crash():
+    import os
+    os._exit(1)
+
 @auth.route("/register", methods=["POST"])
 def auth_register():
     user_fields = user_schema.load(request.json)
