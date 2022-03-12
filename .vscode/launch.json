@@ -11,7 +11,7 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "main",
-                "FLASK_ENV": "testing"
+                "FLASK_ENV": "development"
             },
             "args": [
                 "run",

@@ -4,6 +4,7 @@ load_dotenv()
 
 from flask import Flask, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from marshmallow.exceptions import ValidationError
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -30,9 +31,6 @@ def create_app():
 
     #Token Manager
     jwt.init_app(app)
-
-    #Setup Marshmallow Validation Handling
-    from marshmallow.exceptions import ValidationError
 
     #Setup CLI commands
     from commands import db_commands
