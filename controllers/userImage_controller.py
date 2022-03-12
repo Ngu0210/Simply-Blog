@@ -49,10 +49,38 @@ def userImage_create(user_id, user=None):
 @jwt_required()
 @verify_user
 def userImage_show(user_id, id, user=None):
-    return "2"
+    user_image = UserImage.query.filter_by(id=id).first()
+
+    if not user_image:
+        return abort(401, description="Invalid User")
+    
+    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
+    filename = user_image.filename
+    file_obj = bucket.Object(f"user_images/{filename}").get()
+
+    return Response(
+        file_obj["Body"].read(),
+        mimetype="image/*",
+        headers={"Content-Disposition": "attachment;filename=image"}
+    )
+
 
 @userImages.route("/<int:id>", methods=["DELETE"])
 @jwt_required()
 @verify_user
-def userImage_delete(user_id, user=None):
-    return "3"
+def userImage_delete(user_id, id, user=None):
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        return abort(401, description="Invalid User")
+
+    if user.user_image:
+        bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
+        filename = user.user_image.filename
+
+        bucket.Object(f"user_images/{filename}").delete()
+
+        db.session.delete(user.user_image)
+        db.session.commit()
+
+    return ("", 204)
