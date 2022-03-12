@@ -3,9 +3,10 @@ from pickle import TRUE
 
 class Config(object):
 
-    SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+class DevelopmentConfig(Config):
+    DEBUG = True
     @property
     def SQLALCHEMY_DATABASE_URI(self):
         value = os.getenv("DB_URI")
@@ -15,15 +16,20 @@ class Config(object):
 
         return value
 
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-
 class ProductionConfig(Config):
     pass
 
 class TestingConfig(Config):
     Testing = True
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        value = os.getenv("DB_URI_TEST")
+
+        if not value:
+            raise ValueError("DB_URI is not set!")
+
+        return value
+
 
 environment = os.getenv("FLASK_ENV")
 
