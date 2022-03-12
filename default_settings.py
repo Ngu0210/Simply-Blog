@@ -4,6 +4,7 @@ from pickle import TRUE
 class Config(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_SECRET_KEY = "123456"
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -17,7 +18,14 @@ class DevelopmentConfig(Config):
         return value
 
 class ProductionConfig(Config):
-    pass
+    @property
+    def JWT_SECRET_KEY(self):
+        value = os.getenv("JWT_SECRET_KEY")
+
+        if not value:
+            raise ValueError("JWT_SECRET_KEY is not set!")
+
+        return value
 
 class TestingConfig(Config):
     Testing = True
