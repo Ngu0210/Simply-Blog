@@ -52,7 +52,7 @@ def userImage_show(user_id, id, user=None):
     user_image = UserImage.query.filter_by(id=id).first()
 
     if not user_image:
-        return abort(401, description="Invalid User")
+        return abort(401, description="Image Not Found")
     
     bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
     filename = user_image.filename
